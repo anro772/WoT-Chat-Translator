@@ -22,7 +22,14 @@ A real-time chat translator mod for World of Tanks that automatically translates
 - Microsoft Azure Translator API key (free tier available)
 - Python 2.7 (for building from source)
 
-## Quick Start (3 Simple Steps)
+## ⚠️ Important: API Key Notice
+
+This mod requires a Microsoft Translator API key. You have two options:
+
+1. **Build Your Own** (Recommended) - Get your own FREE API key (2M chars/month)
+2. **Download Pre-built** - Uses shared key (may hit limits if many users)
+
+## Quick Start - Build Your Own (Recommended)
 
 ### Step 1: Get Your Free API Key
 1. Go to https://azure.microsoft.com/free/cognitive-services/
