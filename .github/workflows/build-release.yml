@@ -7,15 +7,14 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Use Ubuntu 22.04 which still has Python 2.7
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python 2.7
       run: |
-        # Install Python 2.7 from deadsnakes PPA
-        sudo add-apt-repository -y ppa:deadsnakes/ppa
+        # Ubuntu 22.04 has Python 2.7 in universe repository
         sudo apt-get update
         sudo apt-get install -y python2.7
         
