@@ -89,7 +89,8 @@ def build_translator():
     print('  ✓ Async for battle/training chat (no lag)')
     print('  ✓ Sync for platoon chat')
     print('  ✓ Smart English detection')
-    print('  ✓ Translation caching')
+    print('  ✓ Translation caching (4 hour expiry)')
+    print('  ✓ Rate limiting (200 translations/hour per player)')
     print('\nInstall to: World_of_Tanks/mods/<game_version>/')
     print('Example: World_of_Tanks/mods/2.0.0.0/')
     

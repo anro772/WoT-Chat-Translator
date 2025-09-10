@@ -1,4 +1,7 @@
-# Environment variables - NEVER commit these!
+PRIVATE_WOTMODS_RELEASE/
+
+
+# Environment variables
 .env
 .env.local
 .env.production
@@ -53,3 +56,6 @@ docs/_build/
 # Personal notes
 notes.txt
 TODO.txt
+
+# Claude project settings
+.claude/

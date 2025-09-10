@@ -19,17 +19,18 @@ A real-time chat translator mod for World of Tanks that automatically translates
 ## Requirements
 
 - World of Tanks (tested on 2.0.0.0)
-- Microsoft Azure Translator API key (free tier available)
-- Python 2.7 (for building from source)
+- Python 2.7 (only needed if building from source)
+- Microsoft Azure Translator API key (only needed if building from source)
 
-## ⚠️ Important: API Key Notice
+## Installation Options
 
-This mod requires a Microsoft Translator API key. You have two options:
+### Option 1: Download Pre-built (Easiest)
+Download the ready-to-use mod from [WoTMods.com](https://wotmods.com) - no configuration needed!
 
-1. **Build Your Own** (Recommended) - Get your own FREE API key (2M chars/month)
-2. **Download Pre-built** - Uses shared key (may hit limits if many users)
+### Option 2: Build Your Own (Recommended for Developers)
+Build from source with your own FREE Microsoft API key (2M characters/month)
 
-## Quick Start - Build Your Own (Recommended)
+## Building From Source
 
 ### Step 1: Get Your Free API Key
 1. Go to https://azure.microsoft.com/free/cognitive-services/
@@ -37,51 +38,36 @@ This mod requires a Microsoft Translator API key. You have two options:
 3. Create a "Translator" resource (2 million characters free/month!)
 4. Copy your API key and region from "Keys and Endpoint"
 
-### Step 2: Set Up This Mod
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/wot-chat-translator.git
-   cd wot-chat-translator
-   ```
+### Step 2: Add Your API Keys
 
-2. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
+Edit `mod_MicrosoftTranslator.py` and replace the placeholders on lines 20-21:
 
-3. Edit `.env` and replace:
-   - `YOUR_API_KEY_HERE` → Your actual API key
-   - `YOUR_REGION_HERE` → Your region (e.g., `eastus`)
+```python
+# Before (line 20-21)
+API_KEY = 'YOUR_API_KEY_HERE'
+API_REGION = 'YOUR_REGION_HERE'
 
-### Step 3: Build & Install
+# After (with your actual credentials)
+API_KEY = 'your_actual_api_key_from_azure'
+API_REGION = 'your_actual_region'  # e.g., 'eastus', 'westeurope', 'switzerlandnorth'
+```
+
+**That's it!** No environment variables or .env files needed - just edit these two lines.
+
+### Step 3: Build the Mod
 ```bash
 python build.py
 ```
 
-Copy `build/ChatTranslator.wotmod` to `World_of_Tanks/mods/<game_version>/`
+This will create `build/ChatTranslator.wotmod`
+
+### Step 4: Install
+Copy `ChatTranslator.wotmod` to your World of Tanks mods folder:
+- Windows: `C:\Games\World_of_Tanks\mods\<game_version>\`
+- Example: `C:\Games\World_of_Tanks\mods\2.0.0.0\`
 
 **That's it!** Launch World of Tanks and foreign messages will be translated automatically.
 
-## Alternative Configuration Methods
-
-### Method 1: Using Environment Variables
-Instead of `.env` file, you can set system environment variables:
-```bash
-# Windows
-set MICROSOFT_TRANSLATOR_KEY=your_api_key_here
-set MICROSOFT_TRANSLATOR_REGION=your_region_here
-
-# Linux/Mac
-export MICROSOFT_TRANSLATOR_KEY=your_api_key_here
-export MICROSOFT_TRANSLATOR_REGION=your_region_here
-```
-
-### Method 2: Direct Source Edit
-Edit `mod_MicrosoftTranslator.py` lines 18-19:
-```python
-API_KEY = 'your_actual_api_key'
-API_REGION = 'your_actual_region'  # e.g., 'eastus'
-```
 
 ## How It Works
 
@@ -126,11 +112,11 @@ Debug logs are saved to `microsoft_translator.log` in your World of Tanks folder
 ### Project Structure
 ```
 wot-chat-translator/
-├── mod_MicrosoftTranslator.py  # Main translator mod
+├── mod_MicrosoftTranslator.py  # Main translator mod (add your API keys here)
 ├── build.py                     # Build script
-├── .env.example                 # Environment variables template
 ├── README.md                    # This file
-└── build/                       # Generated .wotmod files
+├── LICENSE                      # MIT License
+└── build/                       # Generated .wotmod files (created after build)
 ```
 
 ### Building for Distribution
