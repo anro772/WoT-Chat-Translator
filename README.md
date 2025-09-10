@@ -22,44 +22,43 @@ A real-time chat translator mod for World of Tanks that automatically translates
 - Microsoft Azure Translator API key (free tier available)
 - Python 2.7 (for building from source)
 
-## Installation
+## Quick Start (3 Simple Steps)
 
-### Build from Source
+### Step 1: Get Your Free API Key
+1. Go to https://azure.microsoft.com/free/cognitive-services/
+2. Click "Try Azure for free" 
+3. Create a "Translator" resource (2 million characters free/month!)
+4. Copy your API key and region from "Keys and Endpoint"
 
+### Step 2: Set Up This Mod
 1. Clone this repository:
    ```bash
    git clone https://github.com/yourusername/wot-chat-translator.git
    cd wot-chat-translator
    ```
 
-2. Get your Microsoft Translator API key (see Configuration section below)
-
-3. Set up your API credentials using ONE of these methods:
-   - **Method 1**: Set environment variables (see Configuration)
-   - **Method 2**: Edit the source code directly (see Configuration)
-
-4. Build the mod:
+2. Copy `.env.example` to `.env`:
    ```bash
-   python build.py
+   cp .env.example .env
    ```
 
-5. Install the generated `ChatTranslator.wotmod` from the `build/` folder to:
-   ```
-   World_of_Tanks/mods/<game_version>/
-   Example: World_of_Tanks/mods/2.0.0.0/
-   ```
+3. Edit `.env` and replace:
+   - `YOUR_API_KEY_HERE` → Your actual API key
+   - `YOUR_REGION_HERE` → Your region (e.g., `eastus`)
 
-## Configuration
+### Step 3: Build & Install
+```bash
+python build.py
+```
 
-### Getting Microsoft Translator API Key
+Copy `build/ChatTranslator.wotmod` to `World_of_Tanks/mods/<game_version>/`
 
-1. Go to [Azure Portal](https://portal.azure.com/)
-2. Create a new Translator resource (free tier gives 2M characters/month)
-3. Go to "Keys and Endpoint" to get your API key and region
+**That's it!** Launch World of Tanks and foreign messages will be translated automatically.
 
-### Setting up Credentials
+## Alternative Configuration Methods
 
-#### Method 1: Environment Variables (Recommended)
+### Method 1: Using Environment Variables
+Instead of `.env` file, you can set system environment variables:
 ```bash
 # Windows
 set MICROSOFT_TRANSLATOR_KEY=your_api_key_here
@@ -70,16 +69,11 @@ export MICROSOFT_TRANSLATOR_KEY=your_api_key_here
 export MICROSOFT_TRANSLATOR_REGION=your_region_here
 ```
 
-#### Method 2: Direct Edit
-Edit `mod_MicrosoftTranslator.py` and replace:
-```python
-API_KEY = os.environ.get('MICROSOFT_TRANSLATOR_KEY', 'YOUR_API_KEY_HERE')
-API_REGION = os.environ.get('MICROSOFT_TRANSLATOR_REGION', 'YOUR_REGION_HERE')
-```
-With:
+### Method 2: Direct Source Edit
+Edit `mod_MicrosoftTranslator.py` lines 18-19:
 ```python
 API_KEY = 'your_actual_api_key'
-API_REGION = 'your_actual_region'  # e.g., 'eastus', 'westeurope'
+API_REGION = 'your_actual_region'  # e.g., 'eastus'
 ```
 
 ## How It Works

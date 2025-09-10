@@ -1,0 +1,75 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python 2.7
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python2.7 python-pip
+        sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+    
+    - name: Inject API keys from secrets
+      env:
+        MICROSOFT_TRANSLATOR_KEY: ${{ secrets.MICROSOFT_TRANSLATOR_KEY }}
+        MICROSOFT_TRANSLATOR_REGION: ${{ secrets.MICROSOFT_TRANSLATOR_REGION }}
+      run: |
+        # Replace placeholders with actual values from GitHub Secrets
+        sed -i "s/YOUR_API_KEY_HERE/$MICROSOFT_TRANSLATOR_KEY/g" mod_MicrosoftTranslator.py
+        sed -i "s/YOUR_REGION_HERE/$MICROSOFT_TRANSLATOR_REGION/g" mod_MicrosoftTranslator.py
+        
+        # Verify replacement worked
+        echo "Checking if keys were injected..."
+        if grep -q "YOUR_API_KEY_HERE" mod_MicrosoftTranslator.py; then
+          echo "ERROR: API key was not replaced!"
+          exit 1
+        fi
+        echo "Keys successfully injected!"
+    
+    - name: Build the mod
+      run: |
+        python2.7 build.py
+    
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ChatTranslator
+        path: build/ChatTranslator.wotmod
+    
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        files: build/ChatTranslator.wotmod
+        tag_name: v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
+        body: |
+          ## Chat Translator for World of Tanks
+          
+          ### Installation
+          1. Download `ChatTranslator.wotmod`
+          2. Place in `World_of_Tanks/mods/<game_version>/`
+          3. Launch the game - translations work automatically!
+          
+          ### Features
+          - 🌍 Auto-detects and translates 60+ languages
+          - ⚡ No performance impact (async translation)
+          - 💬 Works in platoon, training, and battle chat
+          - 🎯 Smart English detection
+          - 📊 Language confidence scores
+          
+          ### For Developers
+          Want to build with your own API keys? Check the [README](https://github.com/${{ github.repository }}) for instructions.
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

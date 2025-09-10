@@ -1,0 +1,55 @@
+# Environment variables - NEVER commit these!
+.env
+.env.local
+.env.production
+
+# Python compiled files
+*.pyc
+*.pyo
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Build outputs
+build/
+dist/
+*.wotmod
+
+# Logs
+*.log
+microsoft_translator.log
+translator.log
+debug.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+temp/
+tmp/
+
+# API Keys and secrets (additional safety)
+*api_key*
+*secret*
+*credential*
+config.ini
+settings.json
+
+# Test files
+test_*.py
+*_test.py
+
+# Documentation build
+docs/_build/
+
+# Personal notes
+notes.txt
+TODO.txt
