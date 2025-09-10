@@ -1,4 +1,4 @@
-name: Build and Release
+name: Build Open Source Release
 
 on:
   push:
@@ -10,64 +10,95 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04  # Use Ubuntu 22.04 which still has Python 2.7
+    runs-on: ubuntu-22.04
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python 2.7
       run: |
-        # Ubuntu 22.04 has Python 2.7 in universe repository
         sudo apt-get update
         sudo apt-get install -y python2.7
-        
-        # Make python2.7 the default python
         sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
-        
-        # Verify installation
         python --version
     
-    - name: Inject API keys from secrets
-      env:
-        MICROSOFT_TRANSLATOR_KEY: ${{ secrets.MICROSOFT_TRANSLATOR_KEY }}
-        MICROSOFT_TRANSLATOR_REGION: ${{ secrets.MICROSOFT_TRANSLATOR_REGION }}
+    - name: Build OPEN SOURCE version (NO KEYS)
       run: |
-        # Replace placeholders with actual values from GitHub Secrets
-        sed -i "s/YOUR_API_KEY_HERE/$MICROSOFT_TRANSLATOR_KEY/g" mod_MicrosoftTranslator.py
-        sed -i "s/YOUR_REGION_HERE/$MICROSOFT_TRANSLATOR_REGION/g" mod_MicrosoftTranslator.py
+        # DO NOT inject any keys - keep placeholders
+        # This version requires users to add their own keys
         
-        # Verify replacement worked
-        echo "Checking if keys were injected..."
-        if grep -q "YOUR_API_KEY_HERE" mod_MicrosoftTranslator.py; then
-          echo "ERROR: API key was not replaced!"
-          exit 1
-        fi
-        echo "Keys successfully injected!"
+        # Create a notice file
+        cat > IMPORTANT_README.txt << 'EOF'
+        ==========================================
+        IMPORTANT: API KEY REQUIRED
+        ==========================================
+        
+        This is the OPEN SOURCE version of the Chat Translator.
+        
+        YOU MUST ADD YOUR OWN API KEY to use this mod:
+        
+        1. Get a FREE Microsoft Translator API key:
+           https://azure.microsoft.com/free/cognitive-services/
+           (2 million characters free per month!)
+        
+        2. Edit mod_MicrosoftTranslator.py and replace:
+           - YOUR_API_KEY_HERE with your actual API key
+           - YOUR_REGION_HERE with your Azure region
+        
+        3. Build the mod:
+           python build.py
+        
+        4. Install the generated .wotmod file
+        
+        For detailed instructions, see:
+        https://github.com/${{ github.repository }}
+        
+        ==========================================
+        EOF
+        
+        # Build without keys (will have placeholders)
+        python build.py || true  # Allow failure since no keys
+        
+        # Create a source bundle for users to build themselves
+        mkdir -p dist
+        zip -r dist/ChatTranslator_SOURCE.zip \
+          mod_MicrosoftTranslator.py \
+          build.py \
+          .env.example \
+          README.md \
+          IMPORTANT_README.txt \
+          LICENSE
     
-    - name: Build the mod
-      run: |
-        python build.py
-    
-    - name: Upload build artifact
+    - name: Upload source bundle
       uses: actions/upload-artifact@v4
       with:
-        name: ChatTranslator
-        path: build/ChatTranslator.wotmod
+        name: ChatTranslator-Source
+        path: dist/ChatTranslator_SOURCE.zip
     
     - name: Create Release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
-        files: build/ChatTranslator.wotmod
+        files: dist/ChatTranslator_SOURCE.zip
         tag_name: v${{ github.run_number }}
-        name: Release v${{ github.run_number }}
+        name: Release v${{ github.run_number }} - Open Source
         body: |
-          ## Chat Translator for World of Tanks
+          ## ⚠️ IMPORTANT: This is the OPEN SOURCE version
           
-          ### Installation
-          1. Download `ChatTranslator.wotmod`
-          2. Place in `World_of_Tanks/mods/<game_version>/`
-          3. Launch the game - translations work automatically!
+          **You MUST add your own API key to use this mod!**
+          
+          ### What's Included
+          📦 **ChatTranslator_SOURCE.zip** - Source code bundle
+          
+          ### How to Use
+          1. Download and extract ChatTranslator_SOURCE.zip
+          2. Get your FREE API key from [Microsoft Azure](https://azure.microsoft.com/free/cognitive-services/)
+          3. Edit the source code or use .env file to add your keys
+          4. Run `python build.py` to create your personal .wotmod
+          5. Install in World of Tanks
+          
+          ### Why No Pre-built .wotmod?
+          To protect API keys and ensure each user has their own quota, we don't distribute pre-built versions with embedded keys.
           
           ### Features
           - 🌍 Auto-detects and translates 60+ languages
@@ -76,8 +107,8 @@ jobs:
           - 🎯 Smart English detection
           - 📊 Language confidence scores
           
-          ### For Developers
-          Want to build with your own API keys? Check the [README](https://github.com/${{ github.repository }}) for instructions.
+          ### Need Help?
+          See the [README](https://github.com/${{ github.repository }}) for detailed instructions.
         draft: false
         prerelease: false
       env:
