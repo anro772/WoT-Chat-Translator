@@ -14,9 +14,16 @@ jobs:
     
     - name: Set up Python 2.7
       run: |
+        # Install Python 2.7 from deadsnakes PPA
+        sudo add-apt-repository -y ppa:deadsnakes/ppa
         sudo apt-get update
-        sudo apt-get install -y python2.7 python-pip
+        sudo apt-get install -y python2.7
+        
+        # Make python2.7 the default python
         sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
+        
+        # Verify installation
+        python --version
     
     - name: Inject API keys from secrets
       env:
@@ -37,7 +44,7 @@ jobs:
     
     - name: Build the mod
       run: |
-        python2.7 build.py
+        python build.py
     
     - name: Upload build artifact
       uses: actions/upload-artifact@v4
